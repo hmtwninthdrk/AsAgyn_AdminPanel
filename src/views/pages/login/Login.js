@@ -15,12 +15,14 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+import { checkEstablishment } from '../../../utils/checkEstablishment'
+import { useDispatch } from 'react-redux'
 
 const Login = () => {
   const navigate = useNavigate()
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
-
+  const dispatch = useDispatch()
   const authorization = async (e) => {
     e.preventDefault()
 
@@ -46,11 +48,13 @@ const Login = () => {
       const data = await response.json()
       console.log(data)
       sessionStorage.setItem('accessToken', data.token)
-      navigate('/')
+      checkEstablishment(dispatch)
+      navigate('/establishment')
     } catch (error) {
       console.error('Error:', error)
     }
   }
+  
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">

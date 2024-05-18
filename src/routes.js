@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 const Analytics = React.lazy(() => import('./components/pages/Analytics/Analytics'))
 const Menu = React.lazy(() => import('./components/pages/Menu/Menu'))
 // const AddMenu = React.lazy(() => import('./components/pages/'))
@@ -14,6 +15,7 @@ const routes = [
   { path: '/menu', name: 'Menu', element: <Menu /> },
   { path: '/orders', name: 'Orders', element: <Orders /> },
   { path: '/settings', name: 'Settings', element: <Settings /> },
+
 ];
 
 export default routes

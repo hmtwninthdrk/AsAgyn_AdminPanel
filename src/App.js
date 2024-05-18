@@ -11,6 +11,8 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'))
+const Establishment = React.lazy(() => import('./components/pages/Establishment/Establishment'))
+
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 
 const App = () => {
@@ -24,7 +26,8 @@ const App = () => {
         }
       >
         <Routes>
-          <Route element={<PrivateRoute/>}>
+          <Route element={<PrivateRoute />}>
+            <Route path="/establishment" element={<Establishment />} />
             <Route element={<DefaultLayout />}>
               {routes.map(({ path, element }, index) => (
                 <Route key={index} path={path} element={element} />
@@ -32,7 +35,7 @@ const App = () => {
             </Route>
           </Route>
           <Route exact path="/login" name="Login Page" element={<Login />} />
-          <Route exact path="*" name="Error404" element={<Page404/>} />
+          <Route exact path="*" name="Error404" element={<Page404 />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
