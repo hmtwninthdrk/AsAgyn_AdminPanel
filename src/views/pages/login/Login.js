@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -17,22 +17,62 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 
 const Login = () => {
+  const navigate = useNavigate()
+  const [login, setLogin] = useState('')
+  const [password, setPassword] = useState('')
+
+  const authorization = async (e) => {
+    e.preventDefault()
+
+    const user = {
+      username: login,
+      password: password,
+    }
+    try {
+      const response = await fetch(
+        'https://756c-185-18-253-110.ngrok-free.app/demo/admin/api/auth',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept-Language': 'ru-RU',
+          },
+          body: JSON.stringify(user),
+        },
+      )
+
+      if (!response.ok) throw new Error('Something went wrong with the POST request')
+
+      const data = await response.json()
+      console.log(data)
+      sessionStorage.setItem('accessToken', data.token)
+      navigate('/')
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
+
   return (
-    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
+    <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol md={8}>
+          <CCol md={4}>
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm>
+                  <CForm onSubmit={authorization}>
                     <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
+                    <p className="text-medium-emphasis">Sign In to your account</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      <CFormInput
+                        placeholder="Username"
+                        value={login}
+                        onChange={(e) => setLogin(e.target.value)}
+                        autoComplete="username"
+                      />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
@@ -40,39 +80,20 @@ const Login = () => {
                       </CInputGroupText>
                       <CFormInput
                         type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
                         autoComplete="current-password"
                       />
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
+                        <CButton type="submit" color="primary" className="px-4">
                           Login
-                        </CButton>
-                      </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
-                          Forgot password?
                         </CButton>
                       </CCol>
                     </CRow>
                   </CForm>
-                </CCardBody>
-              </CCard>
-              <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
-                <CCardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
-                    <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                        Register Now!
-                      </CButton>
-                    </Link>
-                  </div>
                 </CCardBody>
               </CCard>
             </CCardGroup>
