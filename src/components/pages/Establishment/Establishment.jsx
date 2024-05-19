@@ -16,18 +16,22 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilInstitution, cilRestaurant } from '@coreui/icons'
+import { setEstablishment } from '../../../establishmentSlice'
+import { useDispatch } from 'react-redux'
 
 const Establishment = () => {
   const [establishmentName, setEstablishmentName] = useState('')
   const [servingPercentage, setServingPercentage] = useState('')
   const [paymentMethods, setPaymentMethods] = useState([])
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState([])
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
         const response = await fetch(
-          'https://756c-185-18-253-110.ngrok-free.app/demo/admin/api/payment-method',
+          'https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/payment-method',
           {
             headers: {
               Accept: 'application/json',
@@ -63,22 +67,24 @@ const Establishment = () => {
   }
 
   const onSubmit = async (event) => {
-    event.preventDefault();
-    
-    const selectedMethods = paymentMethods.filter(method => selectedPaymentMethods.includes(method.id));
-    
+    event.preventDefault()
+
+    const selectedMethods = paymentMethods.filter((method) =>
+      selectedPaymentMethods.includes(method.id),
+    )
+
     const newEstablishment = {
       backgroundImage: '',
       establishmentName: establishmentName,
       servingPercentage: servingPercentage,
-      paymentMethods: selectedMethods.map(method => ({ id: method.id, name: method.name }))
-    };
-    
-    console.log(newEstablishment);
-    
+      paymentMethods: selectedMethods.map((method) => ({ id: method.id, name: method.name })),
+    }
+
+    console.log(newEstablishment)
+
     try {
       const establishmentResponse = await fetch(
-        'https://756c-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
+        'https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
         {
           method: 'POST',
           headers: {
@@ -88,21 +94,22 @@ const Establishment = () => {
             'Accept-Language': 'ru-RU',
           },
           body: JSON.stringify(newEstablishment),
-        }
-      );
+        },
+      )
       if (establishmentResponse.ok) {
-        const newEstablishmentData = await establishmentResponse.json();
-        const establishmentId = newEstablishmentData.id;
-        console.log(establishmentId);
-        console.log(newEstablishmentData);
+        const newEstablishmentData = await establishmentResponse.json()
+        const establishmentId = newEstablishmentData.id
+        dispatch(setEstablishment(newEstablishmentData))
+        console.log(establishmentId)
+        console.log(newEstablishmentData)
+        navigate("/");
       } else {
-        throw new Error('Failed to create Establishment');
+        throw new Error('Failed to create Establishment')
       }
     } catch (error) {
-      console.error('Error creating establishment or menu:', error);
+      console.error('Error creating establishment or menu:', error)
     }
-  };
-  
+  }
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">

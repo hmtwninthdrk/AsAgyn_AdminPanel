@@ -8,6 +8,7 @@ const Menu = React.lazy(() => import('./components/pages/Menu/Menu'))
 const Orders = React.lazy(() => import('./components/pages/Orders/Orders'))
 const Settings = React.lazy(() => import('./components/pages/Settings/Settings'))
 
+
 // const Charts = React.lazy(() => import('./views/charts/Charts'))
 
 const routes = [
@@ -15,6 +16,7 @@ const routes = [
   { path: '/menu', name: 'Menu', element: <Menu /> },
   { path: '/orders', name: 'Orders', element: <Orders /> },
   { path: '/settings', name: 'Settings', element: <Settings /> },
+
 
 ];
 

@@ -15,8 +15,8 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { checkEstablishment } from '../../../utils/checkEstablishment'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setEstablishment } from '../../../establishmentSlice'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -32,7 +32,7 @@ const Login = () => {
     }
     try {
       const response = await fetch(
-        'https://756c-185-18-253-110.ngrok-free.app/demo/admin/api/auth',
+        'https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/auth',
         {
           method: 'POST',
           headers: {
@@ -48,13 +48,32 @@ const Login = () => {
       const data = await response.json()
       console.log(data)
       sessionStorage.setItem('accessToken', data.token)
-      checkEstablishment(dispatch)
-      navigate('/establishment')
+      const establishmentResponse = await fetch(
+        'https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
+            'ngrok-skip-browser-warning': 'true',
+          },
+        },
+      )
+
+      if (!establishmentResponse.ok) throw new Error('Something went wrong with the GET request')
+      const establishmentData = await establishmentResponse.json()
+      console.log(establishmentData)
+      if (establishmentData) {
+        dispatch(setEstablishment(establishmentData))
+        navigate('/')
+      } else {
+        navigate('/establishment')
+      }
     } catch (error) {
-      console.error('Error:', error)
+      navigate('/establishment')
     }
   }
-  
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">

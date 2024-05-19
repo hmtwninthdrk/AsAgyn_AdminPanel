@@ -26,9 +26,20 @@ import avatar8 from './../../assets/images/avatars/8.jpg'
 import { useNavigate } from 'react-router-dom'
 
 const AppHeaderDropdown = () => {
+
   const navigate = useNavigate()
   const SignOut = () => {
+    console.log("Before sign out:");
+    console.log("accessToken:", sessionStorage.getItem('accessToken'));
+    console.log("reduxState:", sessionStorage.getItem('reduxState'));
+
     sessionStorage.removeItem('accessToken')
+    sessionStorage.removeItem('reduxState')
+
+    console.log("After sign out:");
+    console.log("accessToken:", sessionStorage.getItem('accessToken'));
+    console.log("reduxState:", sessionStorage.getItem('reduxState'));
+
     navigate('/login')
   }
   return (
