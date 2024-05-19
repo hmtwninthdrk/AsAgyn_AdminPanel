@@ -27,8 +27,8 @@ const Analytics = () => {
       const response = await fetch(url, {
         headers: {
           Accept: 'application/json',
-          // Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
-          // 'ngrok-skip-browser-warning': 'true',
+          Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
+          'ngrok-skip-browser-warning': 'true',
         },
       })
       if (!response.ok) throw new Error('Something went wrong')
@@ -45,7 +45,7 @@ const Analytics = () => {
   useEffect(() => {
     
       fetchData(
-        `https://tonyhomework-63-default-rtdb.europe-west1.firebasedatabase.app/${establishment.id}.json`,
+        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-every-month-period/${establishment.id}`,
       ).then((data) => {
         setJanuary({ value: data.JANUARY || 0 })
         setFebruary({ value: data.FEBRUARY || 0 })
@@ -96,18 +96,18 @@ const Analytics = () => {
                   label: 'Income',
                   backgroundColor: '#3399ff',
                   data: [
-                    // january.value,
-                    // february.value,
-                    // march.value,
-                    // april.value,
-                    // may.value,
-                    // june.value,
-                    // july.value,
-                    // august.value,
-                    // september.value,
-                    // october.value,
-                    // november.value,
-                    // december.value,
+                    january.value,
+                    february.value,
+                    march.value,
+                    april.value,
+                    may.value,
+                    june.value,
+                    july.value,
+                    august.value,
+                    september.value,
+                    october.value,
+                    november.value,
+                    december.value,
                   ],
                 },
               ],
