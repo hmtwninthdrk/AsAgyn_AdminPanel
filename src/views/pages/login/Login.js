@@ -64,8 +64,10 @@ const Login = () => {
       if (!establishmentResponse.ok) throw new Error('Something went wrong with the GET request')
       const establishmentData = await establishmentResponse.json()
       console.log(establishmentData)
+      console.log(establishmentData.object)
+
       if (establishmentData) {
-        dispatch(setEstablishment(establishmentData))
+        dispatch(setEstablishment(establishmentData.object))
         navigate('/')
       } else {
         navigate('/establishment')

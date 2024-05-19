@@ -99,7 +99,7 @@ const Establishment = () => {
       if (establishmentResponse.ok) {
         const newEstablishmentData = await establishmentResponse.json()
         const establishmentId = newEstablishmentData.id
-        dispatch(setEstablishment(newEstablishmentData))
+        dispatch(setEstablishment(newEstablishmentData.object))
         console.log(establishmentId)
         console.log(newEstablishmentData)
         navigate("/");

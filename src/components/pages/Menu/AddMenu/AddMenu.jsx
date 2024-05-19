@@ -110,6 +110,10 @@ const AddMenu = () => {
   const handleFileUpload = async (event) => {
     const file = event.target.files[0]
     if (file) {
+      if (file.size > 1024 * 1024) {
+        alert('Файл слишком большой. Максимальный размер файла - 1 МБ.')
+        return
+      }
       try {
         setImageLoading(true)
         const formData = new FormData()
