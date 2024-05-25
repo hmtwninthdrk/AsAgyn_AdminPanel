@@ -11,11 +11,13 @@ import {
   CFormSelect,
 } from '@coreui/react'
 import { useSelector } from 'react-redux'
+import { durationToSeconds } from '../../../../helpers/dateFormat'
 
 const AddMenu = () => {
   const [imageUrl, setImageUrl] = useState('')
   const [imageLoading, setImageLoading] = useState(false)
   const [categorieList, setcategoryList] = useState([])
+  const [fileErrorMessage, setFileErrorMessage] = useState('')
   const navigate = useNavigate()
   const establishment = useSelector((state) => state.establishment.data)
 
@@ -23,7 +25,7 @@ const AddMenu = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          'https://86c1-185-18-253-110.ngrok-free.app/demo/mobile/api/categories',
+          'https://0d6d-185-18-253-110.ngrok-free.app/demo/mobile/api/categories',
           {
             headers: {
               Accept: 'application/json',
@@ -56,9 +58,6 @@ const AddMenu = () => {
   const OnSubmitProducts = async (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
-    let currentDate = new Date()
-    currentDate.setMinutes(currentDate.getMinutes() + formData.get('readyDuration'))
-    let isoString = currentDate.toISOString()
 
     const categories = [
       {
@@ -77,14 +76,19 @@ const AddMenu = () => {
       nameKz: !formData.get('nameKz') ? formData.get('nameRu') : formData.get('nameKz'),
       nameRu: formData.get('nameRu'),
       minAge: formData.get('minAge') ? formData.get('minAge') : 0,
-      readyDuration: isoString,
-      startAvailableTime: null,
-      endAvailableTime: null,
+      readyDuration: durationToSeconds(formData.get('readyDuration')),
+      startAvailableTime: formData.get('startAvailableTime')
+        ? formData.get('startAvailableTime') + ':00+05:00'
+        : null,
+      endAvailableTime: formData.get('endAvailableTime')
+        ? formData.get('endAvailableTime') + ':00+05:00'
+        : null,
       errorFields: [],
     }
     try {
+      console.log(newMenuItem)
       const response = await fetch(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${establishment.menuDTO.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${establishment.menuDTO.id}`,
         {
           method: 'POST',
           headers: {
@@ -111,16 +115,18 @@ const AddMenu = () => {
     const file = event.target.files[0]
     if (file) {
       if (file.size > 1024 * 1024) {
-        alert('Файл слишком большой. Максимальный размер файла - 1 МБ.')
+        setFileErrorMessage('Файл слишком большой. Максимальный размер файла - 1 МБ.')
+        event.target.value = null
         return
       }
       try {
+        setFileErrorMessage('')
         setImageLoading(true)
         const formData = new FormData()
         formData.append('file', file)
 
         const response = await fetch(
-          'https://86c1-185-18-253-110.ngrok-free.app/demo/api/photo/upload-photo',
+          'https://0d6d-185-18-253-110.ngrok-free.app/demo/api/photo/upload-photo',
           {
             method: 'POST',
             headers: {
@@ -150,18 +156,18 @@ const AddMenu = () => {
     <CRow>
       <CCol sm={5}>
         <h4 id="traffic" className="card-title mb-3">
-          Add menu item
+          Добавить новый продукт
         </h4>
         <CForm onSubmit={OnSubmitProducts}>
           <div className="mb-3">
-            <CFormLabel htmlFor="inputTitle">Title</CFormLabel>
+            <CFormLabel htmlFor="inputTitle">Название</CFormLabel>
             <CFormInput required type="text" placeholder="Название" id="inputTitle" name="nameRu" />
             <CFormInput type="text" placeholder="Атауы" id="inputTitle" name="nameKz" />
             <CFormInput type="text" placeholder="Title" id="inputTitle" name="nameEn" />
           </div>
 
           <div className="mb-3">
-            <CFormLabel htmlFor="inputCategory">Category</CFormLabel>
+            <CFormLabel htmlFor="inputCategory">Категория</CFormLabel>
             <CFormSelect id="inputCategory" name="categoryId">
               {categorieList.map((category) => (
                 <option key={category.id} value={category.id} data-category-name={category.name}>
@@ -172,7 +178,7 @@ const AddMenu = () => {
           </div>
 
           <div className="mb-3">
-            <CFormLabel htmlFor="textAreaDescription">Description</CFormLabel>
+            <CFormLabel htmlFor="textAreaDescription">Описание</CFormLabel>
             <CFormTextarea
               required
               id="textAreaDescription"
@@ -181,19 +187,41 @@ const AddMenu = () => {
             ></CFormTextarea>
           </div>
           <div className="mb-3">
-            <CFormLabel htmlFor="inputPrice">Price</CFormLabel>
+            <CFormLabel htmlFor="inputPrice">Цена</CFormLabel>
             <CFormInput required type="number" id="inputPrice" name="price" />
           </div>
           <div className="mb-3">
-            <CFormLabel htmlFor="inputMinAge">Min Age</CFormLabel>
+            <CFormLabel htmlFor="inputMinAge">Ограничение по возрасту</CFormLabel>
             <CFormInput type="number" id="inputMinAge" name="minAge" />
           </div>
           <div className="mb-3">
-            <CFormLabel htmlFor="inputReadyDuration">Ready Duration</CFormLabel>
-            <CFormInput required type="number" id="inputReadyDuration" name="readyDuration" />
+            <CFormLabel htmlFor="inputReadyDuration">Продолжительность готовности</CFormLabel>
+            <CFormSelect required id="inputReadyDuration" name="readyDuration">
+              <option value="1 мин">1 мин</option>
+              <option value="5 мин">5 мин</option>
+              <option value="10 мин">10 мин</option>
+              <option value="15 мин">15 мин</option>
+              <option value="30 мин">30 мин</option>
+              <option value="45 мин">45 мин</option>
+              <option value="1 час">1 час</option>
+              <option value="1 час 30 мин">1 час 30 мин</option>
+              <option value="2 часа">2 часа</option>
+            </CFormSelect>
           </div>
           <div className="mb-3">
-            <CFormLabel htmlFor="formFile">Photo</CFormLabel>
+            <CFormLabel htmlFor="inputStartAvailableTime">Начальное доступное время</CFormLabel>
+            <CFormInput
+              type="datetime-local"
+              id="inputStartAvailableTime"
+              name="startAvailableTime"
+            />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="inputEndAvailableTime">Конец доступного времени</CFormLabel>
+            <CFormInput type="datetime-local" id="inputEndAvailableTime" name="endAvailableTime" />
+          </div>
+          <div className="mb-3">
+            <CFormLabel htmlFor="filePhoto">Фото</CFormLabel>
             <CFormInput
               onChange={handleFileUpload}
               type="file"
@@ -201,6 +229,7 @@ const AddMenu = () => {
               accept="image/*"
               name="image"
             />
+            {fileErrorMessage}
           </div>
           <CRow>
             <CCol lg={6} className="mb-3 mb-lg-0">

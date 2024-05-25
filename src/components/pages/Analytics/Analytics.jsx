@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux'
 
 const Analytics = () => {
   const establishment = useSelector((state)=>state.establishment.data)
-  console.log(establishment);
   const [january, setJanuary] = useState({ value: 0 })
   const [february, setFebruary] = useState({ value: 0 })
   const [march, setMarch] = useState({ value: 0 })
@@ -34,7 +33,6 @@ const Analytics = () => {
       if (!response.ok) throw new Error('Something went wrong')
 
       const data = await response.json()
-      console.log(data)
       return data
     } catch (error) {
       console.error('Error fetching data: ', error)
@@ -42,10 +40,9 @@ const Analytics = () => {
     }
   }
 
-  useEffect(() => {
-    
+  useEffect(() => {    
       fetchData(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-every-month-period/${establishment.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-every-month-period/${establishment.id}`,
       ).then((data) => {
         setJanuary({ value: data.JANUARY || 0 })
         setFebruary({ value: data.FEBRUARY || 0 })
@@ -70,26 +67,26 @@ const Analytics = () => {
           <CRow>
             <CCol sm={5}>
               <h4 id="traffic" className="card-title mb-0">
-                Income
+                Доход
               </h4>
-              <div className="small text-medium-emphasis">January - July 2021</div>
+             
             </CCol>
           </CRow>
           <CChartBar
             data={{
               labels: [
-                'January',
-                'February',
-                'March',
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December',
+                'Январь',
+                'Февраль',
+                'Март',
+                'Апрель',
+                'Май',
+                'Июнь',
+                'Июль',
+                'Август',
+                'Сентябрь',
+                'Октябрь',
+                'Ноябрь',
+                'Декабрь',
               ],
               datasets: [
                 {

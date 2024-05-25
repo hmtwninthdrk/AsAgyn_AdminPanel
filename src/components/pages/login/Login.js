@@ -32,7 +32,7 @@ const Login = () => {
     }
     try {
       const response = await fetch(
-        'https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/auth',
+        'https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/auth',
         {
           method: 'POST',
           headers: {
@@ -49,7 +49,7 @@ const Login = () => {
       console.log(data)
       sessionStorage.setItem('accessToken', data.token)
       const establishmentResponse = await fetch(
-        'https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
+        'https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
         {
           method: 'GET',
           headers: {
@@ -64,16 +64,17 @@ const Login = () => {
       if (!establishmentResponse.ok) throw new Error('Something went wrong with the GET request')
       const establishmentData = await establishmentResponse.json()
       console.log(establishmentData)
-      console.log(establishmentData.object)
+      console.log(establishmentData.hasErrors);
+      console.log(establishmentData.hasErrors==false)
 
-      if (establishmentData) {
+      if (establishmentData.hasErrors===false) {
         dispatch(setEstablishment(establishmentData.object))
         navigate('/')
       } else {
         navigate('/establishment')
       }
     } catch (error) {
-      navigate('/establishment')
+      console.log("Error" + error);
     }
   }
 
@@ -86,14 +87,14 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm onSubmit={authorization}>
-                    <h1>Login</h1>
-                    <p className="text-medium-emphasis">Sign In to your account</p>
+                    <h1>Войти</h1>
+                    <p className="text-medium-emphasis">Войдите в свою учетную запись</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Username"
+                        placeholder="Имя пользователя"
                         value={login}
                         onChange={(e) => setLogin(e.target.value)}
                         autoComplete="username"
@@ -107,14 +108,14 @@ const Login = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Password"
+                        placeholder="Пароль"
                         autoComplete="current-password"
                       />
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
                         <CButton type="submit" color="primary" className="px-4">
-                          Login
+                          Войти
                         </CButton>
                       </CCol>
                     </CRow>

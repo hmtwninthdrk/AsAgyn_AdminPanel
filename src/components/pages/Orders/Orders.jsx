@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import {
   CFormSelect,
   CTable,
-  CRow,
-  CCol,
   CTableBody,
   CTableDataCell,
   CTableHead,
@@ -11,8 +9,11 @@ import {
   CTableRow,
   CPagination,
   CPaginationItem,
-  CFormInput,
   CButton,
+  CAccordion,
+  CAccordionItem,
+  CAccordionHeader,
+  CAccordionBody,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilCaretLeft, cilCaretRight } from '@coreui/icons'
@@ -20,134 +21,70 @@ import pusherJs from 'pusher-js'
 import { useSelector } from 'react-redux'
 
 const Orders = () => {
-  const [sessions, setSessions] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [allOpenSessions, setAllOpenSessions] = useState([])
   const establishment = useSelector((state) => state.establishment.data)
-  const itemsPerPage = 20
 
   useEffect(() => {
-    const pusher = new pusherJs('1b1aac5f3ed531c5e179', {
-      cluster: 'ap2',
-    })
-    const channel = pusher.subscribe('AsAgyn-channel')
-    channel.bind('dining-session-create-event', function (data) {
-      console.log('Session created:', data)
-      setSessions((prevSessions) => {
-        // Проверка, есть ли уже в массиве сессия с таким же id
-        const sessionExists = prevSessions.some((session) => session.id === data.id)
-        if (!sessionExists) {
-          // Если такой сессии еще нет, добавляем новую сессию к массиву
-          return [...prevSessions, data]
-        } else {
-          // Если сессия с таким id уже существует, возвращаем предыдущее состояние
-          return prevSessions
-        }
-      })
-      fetchSessions()
-    })
-
-    channel.bind('order-create-event', function (data) {
-      console.log('Order created:', data)
-      const updatedSessions = sessions.map((session) => {
-        if (session.id === data.order.diningSessionDTO.id) {
-          //data.diningSessionDTO.id?
-          return {
-            ...session,
-            orders: Array.isArray(session.orders) ? [...session.orders, data.order] : [data.order],
-          }
-        }
-        return session
-      })
-      setSessions(updatedSessions)
-    })
-
-    channel.bind('call-waiter', function (data) {
-      console.log('Session created:', data)
-      alert(data)
-    })
-
-    console.log('Pusher connected successfully!')
-    return () => {
-      pusher.unsubscribe('AsAgyn-channel')
-    }
-  }, [sessions])
-
-  const fetchSessions = async () => {
-    try {
-      const response = await fetch(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/dining-session/all-session/${establishment.id}`,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
-            'ngrok-skip-browser-warning': 'true',
-            'Accept-Language': 'ru-RU',
-          },
-        },
-      )
-      if (!response.ok) throw new Error('Something went wrong')
-
-      const data = await response.json()
-      console.log(data)
-
-      const sessionsWithOrders = await Promise.all(
-        data.map(async (session) => {
-          const orderResponse = await fetch(
-            `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/dining-session/${session.id}`,
-            {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
-                'ngrok-skip-browser-warning': 'true',
-                'Accept-Language': 'ru-RU',
-              },
+    const getAllSessions = async () => {
+      try {
+        const response = await fetch(
+          `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/dining-session/all-session/${establishment.id}`,
+          {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+              Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
+              'ngrok-skip-browser-warning': 'true',
+              'Accept-Language': 'ru-RU',
             },
+          },
+        )  
+        if (response.ok) {
+          const data = await response.json()
+          const sessionsWithOrders = await Promise.all(
+            data.map(async (session) => {
+              const orderResponse = await fetch(
+                `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/order/by-session/${session.id}`,
+                {
+                  method: 'GET',
+                  headers: {
+                    Accept: 'application/json',
+                    Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
+                    'ngrok-skip-browser-warning': 'true',
+                    'Accept-Language': 'ru-RU',
+                  },
+                },
+              )    
+              if (!orderResponse.ok) throw new Error('Failed to fetch orders for session')
+              const ordersData = await orderResponse.json()
+              if (ordersData !== null) {
+                return {
+                  ...session,
+                  orders: ordersData,
+                }
+              }
+              return {
+                ...session,
+                orders: [],
+              }
+            }),
           )
-          if (!orderResponse.ok) throw new Error('Failed to fetch orders for session')
-
-          const ordersData = await orderResponse.json()
-          console.log(ordersData)
-          return {
-            ...session,
-            orders: ordersData,
-          }
-        }),
-      )
-
-      setSessions(sessionsWithOrders)
-    } catch (error) {
-      console.error('Error fetching sessions: ', error)
-    }
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      fetchSessions()
+          setAllOpenSessions(sessionsWithOrders)
+        } else {
+          throw new Error('Failed to fetch sessions')
+        }
+      } catch (error) {
+        console.error('Error fetching sessions:', error)
+      }
     }
 
-    fetchData()
+    getAllSessions()
   }, [])
 
-  const updateOrderStatus = async (sessionId, orderId, newStatus) => {
+  const updateOrderStatus = async (order,orderId,newStatus) => {
     try {
-      // Находим заказ в текущем состоянии
-      const sessionToUpdate = sessions.find((session) => session.id === sessionId)
-      if (!sessionToUpdate) return
-      const updatedOrders = [...sessionToUpdate.orders] // Создаем копию массива заказов
-
-      const orderIndex = updatedOrders.findIndex((order) => order.id === orderId) // Находим индекс нужного заказа
-
-      if (orderIndex !== -1) {
-        updatedOrders[orderIndex] = { ...updatedOrders[orderIndex], orderStatus: newStatus } // Обновляем статус нужного заказа
-      }
-
-      console.log(updatedOrders[orderIndex])
-
       const response = await fetch(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/order/${orderId}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/order/${orderId}`,
         {
           method: 'PUT',
           headers: {
@@ -157,33 +94,35 @@ const Orders = () => {
             'ngrok-skip-browser-warning': 'true',
             'Accept-Language': 'ru-RU',
           },
-          body: JSON.stringify(updatedOrders[orderIndex]),
+          body: JSON.stringify({ ...order, orderStatus: newStatus }),
         },
       )
-
       if (!response.ok) {
         throw new Error('Failed to update order status')
       }
-
-      setSessions((prevSessions) => {
-        const updatedSessions = prevSessions.map((session) => {
-          if (session.id === sessionId) {
-            return { ...session, orders: updatedOrders }
-          }
-          return session
-        })
-        return updatedSessions
-      })
+      const updatedOrder = await response.json()
+      setAllOpenSessions((prevSessions) =>
+        prevSessions.map((session) =>
+          session.id === order.diningSessionDTO.id
+            ? {
+                ...session,
+                orders: session.orders.map((o) =>
+                  o.id === orderId ? updatedOrder : o
+                ),
+              }
+            : session
+        )
+      )
     } catch (error) {
       console.error('Error updating order status:', error)
     }
   }
+  console.log(allOpenSessions);
 
-  const handleCloseSession = async (sessionId) => {
-    const sessionToUpdate = sessions.find((session) => session.id === sessionId)
+  const handleCloseSession = async (session,sessionId) => {
     try {
       const response = await fetch(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/dining-session/close-session/${sessionId}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/dining-session/close-session/${sessionId}`,
         {
           method: 'POST',
           headers: {
@@ -193,171 +132,101 @@ const Orders = () => {
             'ngrok-skip-browser-warning': 'true',
             'Accept-Language': 'ru-RU',
           },
-          body: JSON.stringify({ ...sessionToUpdate, close: true }),
+          body: JSON.stringify({...session,close:true}),
         },
       )
-
       if (!response.ok) {
         throw new Error('Failed to close session')
       }
-
-      // Если сессия успешно закрыта, вызываем функцию для загрузки данных
-      fetchSessions()
+      setAllOpenSessions((prevSessions) =>
+        prevSessions.filter((s) => s.id !== sessionId)
+      )
     } catch (error) {
       console.error('Error closing session:', error)
     }
   }
 
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = sessions.slice(indexOfFirstItem, indexOfLastItem)
-
-  const pageNumbers = []
-  for (let i = 1; i <= Math.ceil(sessions.length / itemsPerPage); i++) {
-    pageNumbers.push(i)
-  }
-
-  const renderPagination = pageNumbers.map((number) => (
-    <CPaginationItem
-      key={number}
-      active={number === currentPage}
-      role="button"
-      onClick={() => setCurrentPage(number)}
-    >
-      {number}
-    </CPaginationItem>
-  ))
-
-  const handleSearchChange = (event) => {
-    const value = event.target.value
-    setCurrentPage(1)
-    setSearchTerm(value)
-  }
-
-  console.log(currentItems);
   return (
     <div>
-      <CRow className="mb-3 justify-content-end">
-        <CCol xs="auto">
-          <CFormInput
-            type="text"
-            placeholder="Search..."
-            aria-label="Search"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </CCol>
-      </CRow>
-      <CTable align="middle" className="mb-4 border" hover responsive>
-        <CTableHead color="light">
-          <CTableRow>
-            <CTableHeaderCell className="text-center">Table</CTableHeaderCell>
-            <CTableHeaderCell>Created on</CTableHeaderCell>
-            <CTableHeaderCell>Session</CTableHeaderCell>
-            <CTableHeaderCell>Menu Items</CTableHeaderCell>
-            <CTableHeaderCell>Status</CTableHeaderCell>
-            <CTableHeaderCell>Quantity</CTableHeaderCell>
-            <CTableHeaderCell>Description</CTableHeaderCell>
-            <CTableHeaderCell>Total</CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-        <CTableBody>
-          {currentItems.map((item, index) => (
-            <CTableRow key={index}>
-              <CTableDataCell className="text-center">
-                <div>{item.id}</div>
-              </CTableDataCell>
-              <CTableDataCell>
-                <div>{item.startDateTime}</div>
-              </CTableDataCell>
-              <CTableDataCell>
-                <CButton onClick={() => handleCloseSession(item.id)}>Закрыть сессию</CButton>
-              </CTableDataCell>
-              <CTableDataCell>
-                {item.orders &&
-                  item.orders.map((menu) => (
-                    <div key={menu.id}>
-                      {menu.orderItemDTOS.map((order) => (
-                        <div key={order.id}>
-                          #{order.id} {order.title}
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-              </CTableDataCell>
-              <CTableDataCell>
-                {item.orders &&
-                  item.orders.map((menu) => (
-                    <div key={menu.id}>
-                      <CFormSelect
-                        aria-label="Status"
-                        value={menu.orderStatus}
-                        onChange={(e) => {
-                          const newStatus = e.target.value
-                          updateOrderStatus(item.id, menu.id, newStatus)
-                        }}
-                        options={[
-                          { label: 'Processing', value: 'Processing' },
-                          { label: 'Cooking', value: 'Cooking' },
-                          { label: 'Serving', value: 'Serving' },
-                          { label: 'Served', value: 'Served' },
-                          { label: 'Payed', value: 'Payed' },
-                          { label: 'Cancelled', value: 'Cancelled' },
-                        ]}
-                      />
-                    </div>
-                  ))}
-              </CTableDataCell>
-              <CTableDataCell>
-                {item.orders &&
-                  item.orders.map((menu) => (
-                    <div key={menu.id}>
-                      {menu.orderItemDTOS.map((order) => (
-                        <div key={order.id}>{order.quantity}</div>
-                      ))}
-                    </div>
-                  ))}
-              </CTableDataCell>
-              <CTableDataCell>
-                {item.orders &&
-                  item.orders.map((menu) => (
-                    <div key={menu.id}>
-                      {menu.orderItemDTOS.map((order) => (
-                        <div key={order.id}>{order.description}</div>
-                      ))}
-                    </div>
-                  ))}
-              </CTableDataCell>
-              <CTableDataCell>
-                {item.orders &&
-                  item.orders.map((menu) => (
-                    <div key={menu.id}>
-                      {menu.orderItemDTOS.map((order) => (
-                        <div key={order.id}>{order.cost}</div>
-                      ))}
-                    </div>
-                  ))}
-              </CTableDataCell>
-            </CTableRow>
-          ))}
-        </CTableBody>
-      </CTable>
+      {allOpenSessions &&
+        allOpenSessions.map((session, index) => ( 
+          <div
+            key={index}
+            style={{
+              background: 'white',
+              padding: '10px',
+              marginBottom: '10px',
+              border: '1px solid #000',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
+              Открытая сессия
+              <CButton onClick={()=>handleCloseSession(session,session.id)} color="danger">Закрыть сессию</CButton>
+            </div>
+            <div>
+              {session.orders && session.orders.length > 0 ? (
+                session.orders.map((order, orderIndex) => ( 
+                  <CAccordion key={orderIndex} flush>
+                    <CAccordionItem>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '50px' }}>
+                        Заказ № {order.id}
+                        <CFormSelect
+                          style={{ width: '50%' }}
+                          value={order.orderStatus}
+                          onChange={(e)=>{
+                            updateOrderStatus(order,order.id,e.target.value)
+                          }}
+                          aria-label="Status"
+                          options={[
+                            { label: 'В процессе', value: 'Processing' },
+                            { label: 'Готовиться', value: 'Cooking' },
+                            { label: 'Подается', value: 'Serving' },
+                            { label: 'Подан', value: 'Served' },
+                            { label: 'Оплачен', value: 'Payed' },
+                            { label: 'Отменен', value: 'Cancelled' },
+                          ]}
+                        />
+                        <CAccordionHeader />
+                      </div>
+                      <CAccordionBody>
+                        <CTable align="middle" className="mb-4 border" hover responsive>
+                          <CTableHead color="light">
+                            <CTableRow>
+                              <CTableHeaderCell className="text-center">Название</CTableHeaderCell>
+                              <CTableHeaderCell>Количество</CTableHeaderCell>
+                              <CTableHeaderCell>Описание</CTableHeaderCell>
+                              <CTableHeaderCell>Цена</CTableHeaderCell>
+                            </CTableRow>
+                          </CTableHead>
+                          <CTableBody>
+                            {order.orderItemDTOS.map((orderItem) => (
+                              <CTableRow key={orderItem.id}>
+                                <CTableDataCell className="text-center">
+                                   {orderItem.title} 
+                                </CTableDataCell>
+                                <CTableDataCell>{orderItem.quantity}</CTableDataCell>
+                                <CTableDataCell>{orderItem.description}</CTableDataCell>
+                                <CTableDataCell>{orderItem.cost} ₸</CTableDataCell>
+                              </CTableRow>
+                            ))} 
+                          </CTableBody>
+                        </CTable>
+                      </CAccordionBody>
+                    </CAccordionItem>
+                  </CAccordion>
+                 )) 
+              ) : ( 
+                <div>Нет заказов</div>
+               )} 
+            </div>
+          </div>
+        ))} 
       <CPagination aria-label="Page navigation example">
-        <CPaginationItem
-          aria-label="Previous"
-          disabled={currentPage === 1}
-          role="button"
-          onClick={() => setCurrentPage(currentPage - 1)}
-        >
+        <CPaginationItem aria-label="Previous">
           <CIcon icon={cilCaretLeft} size="sm" />
         </CPaginationItem>
-        {renderPagination}
-        <CPaginationItem
-          aria-label="Next"
-          disabled={currentPage === pageNumbers.length}
-          role="button"
-          onClick={() => setCurrentPage(currentPage + 1)}
-        >
+        {/* Add pagination logic here */}
+        <CPaginationItem aria-label="Next">
           <CIcon icon={cilCaretRight} size="sm" />
         </CPaginationItem>
       </CPagination>

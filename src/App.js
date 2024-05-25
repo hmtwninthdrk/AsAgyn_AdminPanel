@@ -10,10 +10,10 @@ import PrivateRoute from './utils/PrivateRoute'
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
-const Login = React.lazy(() => import('./views/pages/login/Login'))
+const Login = React.lazy(() => import('./components/pages/login/Login'))
 const Establishment = React.lazy(() => import('./components/pages/Establishment/Establishment'))
 
-const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
+const Page404 = React.lazy(() => import('./components/pages/page404/Page404'))
 
 const App = () => {
   return (

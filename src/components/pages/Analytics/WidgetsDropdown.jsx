@@ -28,7 +28,6 @@ const WidgetsDropdown = () => {
       )
       if (!response.ok) throw new Error('Something went wrong')
       const data = await response.json()
-      //console.log(data)
       setData(data)
     } catch (error) {
       console.error('Error fetching data: ', error)
@@ -55,38 +54,38 @@ const WidgetsDropdown = () => {
       var firstDayOfMonth = new Date(nowLocal.getFullYear(), nowLocal.getMonth(), 1, 5, 0, 0)
       var firstDayOfYear = new Date(nowLocal.getFullYear(), 0, 1, 5, 0, 0)
       fetchData(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
         nowLocal,
         nowLocal,
         setOrdersDay,
       )
       fetchData(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
         firstDayOfMonth,
         nowLocal,
         setOrdersMonth,
       )
       fetchData(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
         firstDayOfYear,
         nowLocal,
         setOrdersYear,
       )
 
       fetchData(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
         nowLocal,
         nowLocal,
         setIncomeDay,
       )
       fetchData(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
         firstDayOfMonth,
         nowLocal,
         setIncomeMonth,
       )
       fetchData(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
         firstDayOfYear,
         nowLocal,
         setIncomeYear,
@@ -103,7 +102,7 @@ const WidgetsDropdown = () => {
           color="primary"
           progress={{ value: Math.abs(ordersDay.percent) }}
           inverse
-          title="Orders per day"
+          title="Заказы в день"
           value={
             <>
               {ordersDay.count}{' '}
@@ -122,7 +121,7 @@ const WidgetsDropdown = () => {
           color="info"
           progress={{ value: Math.abs(ordersMonth.percent) }}
           inverse
-          title="Orders per month"
+          title="Заказы в месяц"
           value={
             <>
               {ordersMonth.count}{' '}
@@ -141,7 +140,7 @@ const WidgetsDropdown = () => {
           color="warning"
           progress={{ value: Math.abs(ordersYear.percent) }}
           inverse
-          title="Orders per year"
+          title="Заказы в год"
           value={
             <>
               {ordersYear.count}{' '}
@@ -160,7 +159,7 @@ const WidgetsDropdown = () => {
           color="secondary"
           progress={{ value: Math.abs(incomeDay.percent) }}
           inverse
-          title="Income per day"
+          title="Доход в день"
           value={
             <>
               {incomeDay.sum}{' '}
@@ -179,7 +178,7 @@ const WidgetsDropdown = () => {
           color="danger"
           progress={{ value: Math.abs(incomeMonth.percent) }}
           inverse
-          title="Income per month"
+          title="Доход в месяц"
           value={
             <>
               {incomeMonth.sum}{' '}
@@ -198,7 +197,7 @@ const WidgetsDropdown = () => {
           color="dark"
           progress={{ value: Math.abs(incomeYear.percent) }}
           inverse
-          title="Income per year"
+          title="Доход в год"
           value={
             <>
               {incomeYear.sum}{' '}

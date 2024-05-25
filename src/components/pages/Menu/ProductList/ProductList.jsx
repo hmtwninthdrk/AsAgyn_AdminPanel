@@ -31,7 +31,7 @@ const ProductList = () => {
   const fetchProductsAndImages = async (menuId, searchTerm) => {
     try {
       const productsResponse = await fetch(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${menuId}?query=${searchTerm}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${menuId}?query=${searchTerm}`,
         {
           headers: {
             Accept: 'application/json',
@@ -44,34 +44,35 @@ const ProductList = () => {
 
       const productsData = await productsResponse.json()
       console.log(productsData)
-
+      if(productsData.imageUrl!==""){}
       const imagePromises = productsData.items.map(async (item) => {
-        try {
-          const response = await fetch(
-            `https://86c1-185-18-253-110.ngrok-free.app${item.imageUrl}`,
-            {
-              method: 'GET',
-              headers: {
-                Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
-                'ngrok-skip-browser-warning': 'true',
+        if (item.imageUrl !== "") { // Проверяем imageUrl для каждого элемента
+          try {
+            const response = await fetch(
+              `https://0d6d-185-18-253-110.ngrok-free.app${item.imageUrl}`,
+              {
+                method: 'GET',
+                headers: {
+                  Authorization: 'Bearer ' + sessionStorage.getItem('accessToken'),
+                  'ngrok-skip-browser-warning': 'true',
+                },
               },
-            },
-          )
-          if (!response.ok) throw new Error('Failed to get photo content')
-
-          const image = await response.blob()
-          const imageUrl = URL.createObjectURL(image)
-          return { id: item.id, url: imageUrl }
-        } catch (error) {
-          console.error('Error getting photo content:', error)
+            )
+            if (!response.ok) throw new Error('Failed to get photo content')
+      
+            const image = await response.blob()
+            const imageUrl = URL.createObjectURL(image)
+            return { id: item.id, url: imageUrl }
+          } catch (error) {
+            console.error('Error getting photo content:', error)
+            return { id: item.id, url: '' }
+          }
+        } else {
           return { id: item.id, url: '' }
         }
       })
 
-      // Дожидаемся выполнения всех запросов изображений параллельно
       const imageResults = await Promise.all(imagePromises)
-
-      // Формируем объект с URL изображений
       const urls = imageResults.reduce((acc, result) => {
         acc[result.id] = result.url
         return acc
@@ -91,7 +92,7 @@ const ProductList = () => {
   const deleteProduct = async (id) => {
     try {
       const response = await fetch(
-        `https://86c1-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
+        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
         {
           method: 'DELETE',
           headers: {
@@ -101,7 +102,6 @@ const ProductList = () => {
         },
       )
       if (!response.ok) throw new Error('Failed to delete the product')
-
       setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id))
     } catch (error) {
       console.error('Error deleting product: ', error)
