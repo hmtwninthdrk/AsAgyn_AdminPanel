@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   CAvatar,
   CBadge,
@@ -29,16 +29,16 @@ const AppHeaderDropdown = () => {
 
   const navigate = useNavigate()
   const SignOut = () => {
-    console.log("Before sign out:");
-    console.log("accessToken:", sessionStorage.getItem('accessToken'));
-    console.log("reduxState:", sessionStorage.getItem('reduxState'));
+    console.log('Before sign out:')
+    console.log('accessToken:', sessionStorage.getItem('accessToken'))
+    console.log('reduxState:', sessionStorage.getItem('reduxState'))
 
     sessionStorage.removeItem('accessToken')
     sessionStorage.removeItem('reduxState')
 
-    console.log("After sign out:");
-    console.log("accessToken:", sessionStorage.getItem('accessToken'));
-    console.log("reduxState:", sessionStorage.getItem('reduxState'));
+    console.log('After sign out:')
+    console.log('accessToken:', sessionStorage.getItem('accessToken'))
+    console.log('reduxState:', sessionStorage.getItem('reduxState'))
 
     navigate('/login')
   }
@@ -50,31 +50,17 @@ const AppHeaderDropdown = () => {
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
         <CDropdownItem href="#">
-          <CIcon icon={cilBell} className="me-2" />
-          Updates
-          <CBadge color="info" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
           <CIcon icon={cilEnvelopeOpen} className="me-2" />
           Messages
           <CBadge color="success" className="ms-2">
             42
           </CBadge>
         </CDropdownItem>
-        
+
         <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Settings</CDropdownHeader>
         <CDropdownItem href="#">
           <CIcon icon={cilSettings} className="me-2" />
           Settings
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilCreditCard} className="me-2" />
-          Payments
-          <CBadge color="secondary" className="ms-2">
-            42
-          </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
         <CDropdownItem href="#" onClick={SignOut}>

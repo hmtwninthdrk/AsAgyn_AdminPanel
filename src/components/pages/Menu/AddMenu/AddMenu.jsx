@@ -25,7 +25,7 @@ const AddMenu = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          'https://0d6d-185-18-253-110.ngrok-free.app/demo/mobile/api/categories',
+          'https://33c9-185-18-253-110.ngrok-free.app/demo/mobile/api/categories',
           {
             headers: {
               Accept: 'application/json',
@@ -88,7 +88,7 @@ const AddMenu = () => {
     try {
       console.log(newMenuItem)
       const response = await fetch(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${establishment.menuDTO.id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${establishment.menuDTO.id}`,
         {
           method: 'POST',
           headers: {
@@ -126,7 +126,7 @@ const AddMenu = () => {
         formData.append('file', file)
 
         const response = await fetch(
-          'https://0d6d-185-18-253-110.ngrok-free.app/demo/api/photo/upload-photo',
+          'https://33c9-185-18-253-110.ngrok-free.app/demo/api/photo/upload-photo',
           {
             method: 'POST',
             headers: {

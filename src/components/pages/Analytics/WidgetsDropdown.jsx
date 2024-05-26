@@ -48,44 +48,45 @@ const WidgetsDropdown = () => {
   }
 
   useEffect(() => {
-      var now = new Date()
-      var nowLocal = now
+      let now = new Date()
+      let nowLocal = now
       nowLocal.setHours(now.getHours() + now.getTimezoneOffset() / -60)
-      var firstDayOfMonth = new Date(nowLocal.getFullYear(), nowLocal.getMonth(), 1, 5, 0, 0)
-      var firstDayOfYear = new Date(nowLocal.getFullYear(), 0, 1, 5, 0, 0)
+      let nowDay = new Date(nowLocal.getFullYear(), nowLocal.getMonth(), nowLocal.getDate(), 0, 0, 0, 0);
+      let firstDayOfMonth = new Date(nowLocal.getFullYear(), nowLocal.getMonth(), 1, 0, 0, 0)
+      let firstDayOfYear = new Date(nowLocal.getFullYear(), 0, 1, 0, 0, 0)
       fetchData(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
-        nowLocal,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
+        nowDay,
         nowLocal,
         setOrdersDay,
       )
       fetchData(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
         firstDayOfMonth,
         nowLocal,
         setOrdersMonth,
       )
       fetchData(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/order-count-period/${establishment.id}`,
         firstDayOfYear,
         nowLocal,
         setOrdersYear,
       )
 
       fetchData(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
-        nowLocal,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
+        nowDay,
         nowLocal,
         setIncomeDay,
       )
       fetchData(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
         firstDayOfMonth,
         nowLocal,
         setIncomeMonth,
       )
       fetchData(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-period/${establishment.id}`,
         firstDayOfYear,
         nowLocal,
         setIncomeYear,

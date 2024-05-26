@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   CContainer,
@@ -12,6 +12,7 @@ import {
   CNavLink,
   CNavItem,
   useColorModes,
+  CBadge,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {
@@ -26,8 +27,25 @@ import {
 
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
-
+import usePusherEvent from './Pusher/usePusherSubscription'
 const AppHeader = () => {
+
+  const [notifications, setNotifications] = useState([])
+  usePusherEvent('AsAgyn-channel', 'request-to-close-dining-session', (data) => {
+    setNotifications((prevNotifications) => [
+      ...prevNotifications,
+      {
+        type: 'request-to-close-dining-session',
+        message: `Запрос на закрытие сессий №${data.requestToSession.diningSessionDTO.id} с оплатой ${data.requestToSession.paymentMethodDTO}`,
+      },
+    ])
+  })
+  usePusherEvent('AsAgyn-channel', 'call-waiter', (data) => {
+    setNotifications((prevNotifications) => [
+      ...prevNotifications,
+      { type: 'call-waiter', message: `Вызов оффцианта на стол №${data.clientWait.code}` },
+    ])
+  })
   const headerRef = useRef()
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
 
@@ -90,6 +108,35 @@ const AppHeader = () => {
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
+
+            {/* Notification Dropdown */}
+          <CDropdown variant="nav-item" placement="bottom-end">
+            <CDropdownToggle caret={false} className="position-relative">
+              <CIcon icon={cilBell} size="lg" />
+              {notifications.length > 0 && (
+                <CBadge color="danger" shape="rounded-pill" className="position-absolute top-0 right-0">
+                  {notifications.length}
+                </CBadge>
+              )}
+            </CDropdownToggle>
+            <CDropdownMenu>
+              {notifications.length === 0 ? (
+                <CDropdownItem disabled>No notifications</CDropdownItem>
+              ) : (
+                notifications.map((notification, index) => (
+                  <CDropdownItem key={index}>
+                    <CIcon className="me-2" icon={notification.type === 'call-waiter' ? cilBell : cilEnvelopeOpen} size="lg" />
+                    {notification.message}
+                  </CDropdownItem>
+                ))
+              )}
+            </CDropdownMenu>
+          </CDropdown>
+
+          <li className="nav-item py-1">
+            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+          </li>
+
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>

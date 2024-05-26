@@ -31,7 +31,7 @@ const Establishment = () => {
     const fetchPaymentMethods = async () => {
       try {
         const response = await fetch(
-          'https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/payment-method',
+          'https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/payment-method',
           {
             headers: {
               Accept: 'application/json',
@@ -84,7 +84,7 @@ const Establishment = () => {
 
     try {
       const establishmentResponse = await fetch(
-        'https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
+        'https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
         {
           method: 'POST',
           headers: {

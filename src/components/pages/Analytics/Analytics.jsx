@@ -42,7 +42,7 @@ const Analytics = () => {
 
   useEffect(() => {    
       fetchData(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-every-month-period/${establishment.id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment/revenue-every-month-period/${establishment.id}`,
       ).then((data) => {
         setJanuary({ value: data.JANUARY || 0 })
         setFebruary({ value: data.FEBRUARY || 0 })

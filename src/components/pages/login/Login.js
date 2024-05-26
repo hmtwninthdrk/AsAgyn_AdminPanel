@@ -22,6 +22,7 @@ const Login = () => {
   const navigate = useNavigate()
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState(null);
   const dispatch = useDispatch()
   const authorization = async (e) => {
     e.preventDefault()
@@ -32,7 +33,7 @@ const Login = () => {
     }
     try {
       const response = await fetch(
-        'https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/auth',
+        'https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/auth',
         {
           method: 'POST',
           headers: {
@@ -43,13 +44,19 @@ const Login = () => {
         },
       )
 
-      if (!response.ok) throw new Error('Something went wrong with the POST request')
+      if (!response.ok){
+        if (response.status === 401) {
+          setError('Неправильное имя пользователя или пароль');
+        }
+        else{
+          setError("Что-то пошло не так. Пожалуйста, попробуйте еще раз.");
+        }
+      }
 
       const data = await response.json()
-      console.log(data)
       sessionStorage.setItem('accessToken', data.token)
       const establishmentResponse = await fetch(
-        'https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
+        'https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/establishment',
         {
           method: 'GET',
           headers: {
@@ -63,9 +70,6 @@ const Login = () => {
 
       if (!establishmentResponse.ok) throw new Error('Something went wrong with the GET request')
       const establishmentData = await establishmentResponse.json()
-      console.log(establishmentData)
-      console.log(establishmentData.hasErrors);
-      console.log(establishmentData.hasErrors==false)
 
       if (establishmentData.hasErrors===false) {
         dispatch(setEstablishment(establishmentData.object))
@@ -74,7 +78,7 @@ const Login = () => {
         navigate('/establishment')
       }
     } catch (error) {
-      console.log("Error" + error);
+
     }
   }
 
@@ -112,6 +116,7 @@ const Login = () => {
                         autoComplete="current-password"
                       />
                     </CInputGroup>
+                    {error && <p className="text-danger">{error}</p>}
                     <CRow>
                       <CCol xs={6}>
                         <CButton type="submit" color="primary" className="px-4">

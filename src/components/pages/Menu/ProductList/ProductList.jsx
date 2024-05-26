@@ -31,7 +31,7 @@ const ProductList = () => {
   const fetchProductsAndImages = async (menuId, searchTerm) => {
     try {
       const productsResponse = await fetch(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${menuId}?query=${searchTerm}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/in-menu/${menuId}?query=${searchTerm}`,
         {
           headers: {
             Accept: 'application/json',
@@ -49,7 +49,7 @@ const ProductList = () => {
         if (item.imageUrl !== "") { // Проверяем imageUrl для каждого элемента
           try {
             const response = await fetch(
-              `https://0d6d-185-18-253-110.ngrok-free.app${item.imageUrl}`,
+              `https://33c9-185-18-253-110.ngrok-free.app${item.imageUrl}`,
               {
                 method: 'GET',
                 headers: {
@@ -92,7 +92,7 @@ const ProductList = () => {
   const deleteProduct = async (id) => {
     try {
       const response = await fetch(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
         {
           method: 'DELETE',
           headers: {

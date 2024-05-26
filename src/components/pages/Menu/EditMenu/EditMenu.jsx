@@ -37,7 +37,7 @@ const EditMenu = () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
+          `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
           {
             headers: {
               Accept: 'application/json',
@@ -93,7 +93,7 @@ const EditMenu = () => {
         formData.append('file', file)
 
         const response = await fetch(
-          'https://0d6d-185-18-253-110.ngrok-free.app/demo/api/photo/upload-photo',
+          'https://33c9-185-18-253-110.ngrok-free.app/demo/api/photo/upload-photo',
           {
             method: 'POST',
             headers: {
@@ -155,7 +155,7 @@ const EditMenu = () => {
 
     try {
       const response = await fetch(
-        `https://0d6d-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
+        `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/product-item/${id}`,
         {
           method: 'PUT',
           headers: {
