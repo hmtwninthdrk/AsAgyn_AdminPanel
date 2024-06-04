@@ -54,7 +54,7 @@ const Orders = () => {
     const getAllSessions = async () => {
       try {
         const response = await fetch(
-          `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/dining-session/all-session/${establishment.id}`,
+          `https://33c9-185-18-253-110.ngrok-free.app/demo/admin/api/dining-session/all-session/${establishment.id}?page=${currentPage}&limit=${itemsPerPage}`,
           {
             method: 'GET',
             headers: {

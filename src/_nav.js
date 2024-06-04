@@ -6,29 +6,29 @@ import { CNavItem, CNavTitle } from '@coreui/react'
 const _nav = [
   {
     component: CNavItem,
-    name: 'Analytics',
+    name: 'Аналитика',
     to: '/',
     icon: <CIcon icon={cilChart} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,
-    name: 'Tabs',
+    name: 'Вкладки',
   },
   {
     component: CNavItem,
-    name: 'Menu',
+    name: 'Меню',
     to: '/menu',
     icon: <CIcon icon={cilList} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Orders',
+    name: 'Заказы',
     to: '/orders',
     icon: <CIcon icon={cilSpreadsheet} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
-    name: 'Settings',
+    name: 'Настройки',
     to: '/settings',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },

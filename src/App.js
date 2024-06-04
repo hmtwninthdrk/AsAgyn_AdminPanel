@@ -6,6 +6,7 @@ import './scss/style.scss'
 import routes from './routes'
 import PrivateRoute from './utils/PrivateRoute'
 import { PusherProvider } from './components/Pusher/PusherProvider'
+import reportWebVitals from '../reportWebVitals'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
@@ -42,5 +43,10 @@ const App = () => {
     </BrowserRouter>
   )
 }
+const sendToAnalytics = (metric) => {
+  console.log(metric);
+  // Отправить данные на сервер или в систему аналитики
+};
 
+reportWebVitals(sendToAnalytics);
 export default App

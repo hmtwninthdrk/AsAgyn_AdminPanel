@@ -17,7 +17,7 @@ const Menu = () => {
           <Link to="/menu/addMenu">
             <CButton color="primary" className="mb-3">
               <CIcon icon={cilPlus} className="me-2" />
-              Add New Item
+              Добавить новый продукт
             </CButton>
           </Link>
         </CCol>

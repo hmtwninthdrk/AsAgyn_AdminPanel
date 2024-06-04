@@ -48,24 +48,15 @@ const AppHeaderDropdown = () => {
         <CAvatar src={avatar8} size="md" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
-        <CDropdownItem href="#">
-          <CIcon icon={cilEnvelopeOpen} className="me-2" />
-          Messages
-          <CBadge color="success" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-
-        <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Settings</CDropdownHeader>
+        <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Аккаунт</CDropdownHeader>
         <CDropdownItem href="#">
           <CIcon icon={cilSettings} className="me-2" />
-          Settings
+          Настройки
         </CDropdownItem>
         <CDropdownDivider />
         <CDropdownItem href="#" onClick={SignOut}>
           <CIcon icon={cilLockLocked} className="me-2" />
-          Sign out
+          Выход
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

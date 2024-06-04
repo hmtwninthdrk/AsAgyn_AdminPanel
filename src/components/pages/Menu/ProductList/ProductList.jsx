@@ -140,7 +140,7 @@ const ProductList = () => {
         <CCol xs="auto">
           <CFormInput
             type="text"
-            placeholder="Search..."
+            placeholder="Поиск..."
             aria-label="Search"
             value={searchTerm}
             onChange={handleSearchChange}
@@ -152,10 +152,10 @@ const ProductList = () => {
           <CTableHead color="light">
             <CTableRow>
               <CTableHeaderCell className="text-center">Id</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Image</CTableHeaderCell>
-              <CTableHeaderCell>Title</CTableHeaderCell>
-              <CTableHeaderCell>Description</CTableHeaderCell>
-              <CTableHeaderCell>Price</CTableHeaderCell>
+              <CTableHeaderCell className="text-center">Фото</CTableHeaderCell>
+              <CTableHeaderCell>Название</CTableHeaderCell>
+              <CTableHeaderCell>Описание</CTableHeaderCell>
+              <CTableHeaderCell>Цена</CTableHeaderCell>
               <CTableHeaderCell></CTableHeaderCell>
             </CTableRow>
           </CTableHead>
